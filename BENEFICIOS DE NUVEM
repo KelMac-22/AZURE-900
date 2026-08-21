@@ -1,0 +1,14 @@
+resumo-do-lab-BeneficiosNuvem
+Aula de beneficios de nuvem CRIAÇÃO DE MAQUINA VIRTUAL Na aula podemos verificar que o SLA quanto maior o numero de casas de 9 menos o tempo de inatividade Ao iniciar a criação de uma maquina Virtual voce pode escolher a disponibilidade dessa maquina virtual isso tambem como uma forma de proteção voce tambem pode definir a zona de disponibilidade. ex: zona 1, zona 2, zona 3, pode escolher quantas necessarias ou ate mesmo so uma e todas essas escolhas na criaçãio da maquina virtual vai implicar na questao do temppo de inatividade do SLA
+
+Na criação de conta de armazenamento possui o : LRS GRS ZRS GZRS essas escolhas podem implicar no preço e vendo qual o requisito que voce vai necessitar, se é para teste para zomna, para local, para zona geografica, isso tem que ser verificado antes da criação da maquina desde antes e realmente fazer a escolha certa para que nao haja prejuizo de valores e usar coisas a mais ou ate mesmo a menos
+
+SLA — regra dos "9s"
+
+Mais "9" no SLA = menos tempo de inatividade permitido. Ex: 99% ≈ 3,6 dias de queda/ano; 99,9% ≈ 8h45/ano; 99,95% ≈ 4h22/ano; 99,99% ≈ 52 min/ano.
+
+VM — opções de disponibilidade VM única (disco Premium/Ultra SSD) → SLA 99,9%. Sem redundância, uso simples/teste. Conjunto de disponibilidade (2+ VMs no mesmo datacenter, em racks/energia diferentes) → SLA 99,95%. Zonas de disponibilidade (2+ VMs em datacenters fisicamente separados na região) → SLA 99,99%. Mais zonas = mais proteção e mais custo. Armazenamento — redundância LRS: 3 cópias, 1 datacenter. Mais barato, protege só falha local. ZRS: 3 cópias em zonas diferentes da mesma região. Protege perda de datacenter. GRS: LRS + cópia em região secundária (sem leitura direta). Protege desastre regional. RA-GRS: igual GRS, mas com leitura na secundária. GZRS: ZRS + cópia em região secundária. Zona + região. RA-GZRS: GZRS + leitura na secundária. Máxima proteção, maior custo.
+
+Ordem de proteção/custo: LRS → ZRS → GRS → RA-GRS → GZRS → RA-GZRS Ordem SLA de VM: VM única (99,9%) → Conjunto (99,95%) → Zonas (99,99%)
+
+Regra de ouro: definir o requisito (teste, local, regional, geográfico) antes de criar o recurso, para não pagar redundância desnecessária.
