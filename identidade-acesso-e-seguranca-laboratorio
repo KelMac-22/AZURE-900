@@ -1,0 +1,106 @@
+AZ-900: Identidade, Acesso e Segurança
+1. Microsoft Entra ID (antigo Azure Active Directory)
+É o serviço de identidade e acesso baseado em nuvem da Microsoft.
+Serve para autenticação (login), SSO, MFA, gerenciamento de aplicativos e de dispositivos.
+Usado por Microsoft 365, Azure e milhares de apps SaaS.
+Microsoft Entra Connect: sincroniza usuários do AD local (on-premises) com o Entra ID. Assim o usuário tem uma identidade só nos dois ambientes.
+Microsoft Entra Domain Services: oferece um domínio gerenciado (ingresso no domínio, Group Policy, LDAP, Kerberos/NTLM) sem você precisar manter controladores de domínio. Serve para apps legados na nuvem.
+
+⚠️ Pegadinha: Entra ID ≠ AD DS tradicional. O Entra ID não tem OUs nem GPO. Para isso existe o Entra Domain Services.
+
+2. Autenticação x Autorização
+	Pergunta	Exemplo
+Autenticação (AuthN)	Quem é você?	Login com senha + MFA
+Autorização (AuthZ)	O que você pode fazer?	RBAC decide se você pode criar uma VM
+
+A autenticação sempre vem antes.
+
+3. Métodos de autenticação
+SSO (Single Sign-On): um login para vários apps. Menos senhas significa menos risco.
+MFA: exige 2 ou mais fatores de categorias diferentes:
+algo que você sabe (senha)
+algo que você tem (celular, token)
+algo que você é (biometria)
+Sem senha (passwordless):
+Windows Hello for Business: para o PC pessoal do usuário.
+Microsoft Authenticator: aprovação pelo celular.
+Chaves FIDO2: chave física (USB/NFC).
+
+⚠️ Senha + PIN não é MFA, porque os dois são "algo que você sabe".
+
+4. Identidades externas
+B2B (colaboração): parceiros e fornecedores entram como convidados usando a própria identidade deles.
+B2C: clientes usam o seu app (cadastro/login com Google, Facebook etc.).
+
+Dica para memorizar: B2B = parceiros de negócio, B2C = consumidores.
+
+5. Acesso Condicional (Conditional Access)
+
+Funciona como um "se… então…":
+
+Sinais: usuário, local/IP, dispositivo, aplicativo, nível de risco
+Decisão: permitir, exigir MFA ou bloquear
+Aplicação: a decisão é imposta
+
+Exemplo: "Se o login vier de outro país, exigir MFA."
+Requer licença Entra ID P1 ou superior.
+
+6. RBAC (Controle de Acesso Baseado em Função)
+Define quem pode fazer o quê e onde (em qual escopo).
+Funções internas principais:
+Owner (Proprietário): acesso total e pode dar acesso a outros
+Contributor (Colaborador): gerencia tudo, mas não concede acesso
+Reader (Leitor): só visualiza
+User Access Administrator: só gerencia acessos
+Escopos: Grupo de gerenciamento → Assinatura → Grupo de recursos → Recurso
+As permissões são herdadas para baixo. Por exemplo, um Reader na assinatura é Reader em todos os RGs dela.
+As permissões são aditivas: se você tem Reader e Contributor, vale a soma das duas.
+É aplicado pelo Azure Resource Manager.
+No portal, fica em "Controle de acesso (IAM)" de qualquer recurso. É aí que você faz as atribuições no laboratório.
+
+⚠️ Pegadinha clássica:
+
+RBAC controla quem pode agir (usuários e permissões).
+Azure Policy controla o que é permitido existir (ex.: "só criar VMs em Brazil South").
+Bloqueios de recurso (Resource Locks) impedem exclusão ou alteração até mesmo do Owner.
+7. Confiança Zero (Zero Trust)
+
+Parte do princípio de nunca confiar, sempre verificar. Tem três princípios:
+
+Verificar explicitamente: sempre autenticar e autorizar
+Menor privilégio: dar só o acesso necessário, e só pelo tempo necessário (JIT/JEA)
+Assumir violação: segmentar, criptografar e monitorar como se já tivessem invadido
+
+Os três costumam cair em questão.
+
+8. Defesa em Profundidade
+
+São camadas de proteção, de fora para dentro. Se uma falha, a próxima segura.
+
+Física: datacenter
+Identidade e acesso: Entra ID, MFA
+Perímetro: proteção DDoS, firewall
+Rede: NSG, segmentação
+Computação: VMs, patches
+Aplicativo: código seguro
+Dados: o alvo final, protegido com criptografia
+
+A ordem e "o que protege cada camada" são cobrados.
+
+9. Microsoft Defender for Cloud
+Ferramenta de monitoramento da postura de segurança e proteção contra ameaças.
+Funciona em Azure, on-premises e multicloud (AWS e GCP). Para servidores fora do Azure, usa o Azure Arc.
+Secure Score (Pontuação de segurança): mostra o quão seguro está o ambiente e dá recomendações.
+Tem vários planos Defender (para servidores, SQL, Storage, containers etc.).
+Resumo rápido para a véspera
+Se a questão fala de…	A resposta provável é…
+Login único em vários apps	SSO
+Exigir MFA dependendo do local/risco	Acesso Condicional
+Dar permissão a alguém num RG	RBAC
+Parceiro externo acessando recursos	Entra B2B
+Clientes fazendo login no seu app	Entra B2C
+Sincronizar AD local com a nuvem	Entra Connect
+Domínio gerenciado sem controladores de domínio	Entra Domain Services
+Nota/recomendações de segurança	Defender for Cloud (Secure Score)
+"Nunca confiar, sempre verificar"	Zero Trust
+Várias camadas de proteção	Defesa em profundidade
