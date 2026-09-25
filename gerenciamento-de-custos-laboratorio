@@ -1,0 +1,72 @@
+# 💰 Gerenciamento de Custos no Azure — Laboratório
+
+Este repositório documenta o que aprendi no laboratório de **Gerenciamento de Custos no Microsoft Azure**, parte dos meus estudos para a certificação **AZ-900 (Azure Fundamentals)** na DIO.
+
+---
+
+## 🎯 Objetivo
+
+Entender como estimar, acompanhar e controlar os gastos de recursos na nuvem do Azure, usando as ferramentas nativas da plataforma para evitar surpresas na fatura.
+
+---
+
+## 📚 Conceitos principais
+
+### Fatores que afetam o custo no Azure
+- **Tipo de recurso:** cada serviço (VM, storage, banco de dados) tem sua própria forma de cobrança.
+- **Consumo:** no modelo *pay-as-you-go* você paga pelo que usa (horas de VM, GB armazenados, etc.).
+- **Região:** o mesmo recurso pode ter preços diferentes dependendo da região escolhida.
+- **Largura de banda:** a entrada de dados (*ingress*) geralmente é gratuita; a saída (*egress*) é cobrada.
+- **Tipo de assinatura e contratos:** assinaturas gratuitas, pay-as-you-go ou contratos corporativos têm condições diferentes.
+
+### Formas de economizar
+- **Reservas (Azure Reservations):** compromisso de 1 ou 3 anos com desconto em relação ao preço sob demanda.
+- **Azure Hybrid Benefit:** reaproveitar licenças Windows Server e SQL Server que a empresa já possui.
+- **Instâncias Spot:** capacidade ociosa do Azure com grande desconto, para cargas que podem ser interrompidas.
+- **Desligar ou redimensionar recursos:** VMs paradas (desalocadas) não cobram computação.
+
+---
+
+## 🛠️ Ferramentas estudadas
+
+| Ferramenta | Para que serve |
+|---|---|
+| **Calculadora de Preços** | Estimar o custo de recursos **antes** de criá-los. |
+| **Calculadora de TCO** | Comparar o custo de manter a infraestrutura on-premises com o custo de migrar para o Azure. |
+| **Cost Management + Billing** | Acompanhar e analisar os gastos **reais** das assinaturas. |
+| **Orçamentos (Budgets)** | Definir um limite de gasto e receber alertas ao atingir percentuais dele. |
+| **Alertas de custo** | Notificações sobre orçamento, anomalias e créditos. |
+| **Azure Advisor** | Recomendações personalizadas, incluindo sugestões para reduzir custos. |
+| **Tags (marcas)** | Rótulos (ex.: `departamento: TI`, `ambiente: producao`) para organizar recursos e separar custos por área ou projeto. |
+
+---
+
+## 🧪 Passo a passo do laboratório
+
+1. **Estimar custos** na Calculadora de Preços, adicionando uma máquina virtual e comparando regiões e tamanhos.
+2. **Acessar o Cost Management** no portal do Azure para visualizar a análise de custos por serviço, grupo de recursos e período.
+3. **Criar um orçamento** para a assinatura, definindo um valor mensal e alertas (ex.: 50%, 80% e 100%).
+4. **Aplicar tags** nos recursos para identificar a qual projeto ou equipe cada custo pertence.
+5. **Consultar o Azure Advisor** para verificar recomendações de economia.
+
+---
+
+## 💡 Aprendizados
+
+- Planejar antes de criar recursos evita gastos desnecessários; a Calculadora de Preços é o primeiro passo.
+- Orçamentos **não bloqueiam** recursos automaticamente; eles **alertam** quando o limite se aproxima.
+- Tags são essenciais em empresas para saber exatamente **quem** está gastando **o quê**.
+- Escolher a região e o tamanho certo do recurso faz muita diferença no custo final.
+- Governança de custos é uma responsabilidade contínua, não uma configuração feita uma única vez.
+
+---
+
+## 🔗 Referências
+
+- [Calculadora de Preços do Azure](https://azure.microsoft.com/pt-br/pricing/calculator/)
+- [Documentação do Microsoft Cost Management](https://learn.microsoft.com/pt-br/azure/cost-management-billing/)
+- [Microsoft Learn — AZ-900](https://learn.microsoft.com/pt-br/credentials/certifications/azure-fundamentals/)
+
+---
+
+✍️ Desenvolvido por **Kelwen** durante os estudos para a certificação AZ-900.
