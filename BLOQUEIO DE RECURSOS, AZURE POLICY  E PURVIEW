@@ -1,0 +1,51 @@
+1. Azure Policy — “as regras do jogo”
+
+O que é: um serviço que cria, atribui e gerencia regras para os recursos. Ele garante que tudo o que for criado siga os padrões da empresa.
+
+A sequência interna, que é exatamente a sua lista (“policy → assign policy → allowed locations”):
+
+Policy definition (definição): a regra em si. Ex.: “só pode criar recursos no Brasil”. O Azure já traz muitas prontas (built-in).
+Initiative (iniciativa): um grupo de várias policies juntas, para atribuir tudo de uma vez.
+Assign policy (atribuir): a regra só passa a valer quando você a atribui a um escopo: management group, subscription ou resource group. Ela é herdada para baixo (atribuiu na subscription → vale para todos os resource groups dentro dela).
+Efeito: o que acontece quando alguém descumpre. Os principais: Deny (bloqueia a criação) e Audit (deixa criar, mas marca como não conforme).
+
+Exemplo clássico, Allowed locations: policy pronta do Azure em que você escolhe as regiões permitidas (ex.: Brazil South e East US).
+
+Alguém tenta criar uma VM em West Europe → criação negada.
+Recursos que já existiam fora da regra não são apagados, só aparecem como não conformes no painel de compliance.
+Pegadinha: existe uma policy separada para a localização dos resource groups (“Allowed locations for resource groups”).
+2. Bloqueio de recursos (Resource Locks) — “o cadeado”
+
+O que é: impede que um recurso seja apagado ou alterado por acidente. Pode ser aplicado em subscription, resource group ou recurso, e também é herdado.
+
+Tipos de bloqueio:
+
+Tipo	Ler	Alterar	Excluir
+Delete (CanNotDelete)	✅	✅	❌
+ReadOnly	✅	❌	❌
+
+Pontos que caem na prova:
+
+O lock vale até para o Owner. Ele bloqueia todo mundo, independente da permissão RBAC.
+Para apagar o recurso, é preciso primeiro remover o lock (e só quem tem permissão, como Owner, consegue removê-lo).
+Diferença para a Policy: a Policy controla como os recursos são criados; o lock protege o que já existe.
+3. Microsoft Purview — “governança dos dados”
+
+O que é: uma família de soluções de governança, risco e conformidade de dados. Ela olha para os dados, não para a infraestrutura.
+
+Tem duas grandes áreas:
+
+Risco e conformidade: protege dados do Microsoft 365 (Teams, OneDrive, Exchange), por exemplo classificando informações sensíveis e evitando vazamentos.
+Governança unificada de dados: mapeia dados que estão espalhados (on-premises, multicloud e SaaS) para mostrar onde estão, que tipo de dado é e de onde veio (data map, catálogo, linhagem).
+
+Palavra-chave da prova: “descobrir, classificar e governar dados em vários ambientes” → Purview.
+
+4. Service Trust Portal — “a transparência da Microsoft”
+
+O que é: um portal (servicetrust.microsoft.com) onde a Microsoft publica como ela própria cumpre segurança, privacidade e conformidade.
+
+Tem relatórios de auditoria (ISO, SOC, GDPR etc.), whitepapers e documentos de compliance.
+Alguns conteúdos exigem login com conta Microsoft cloud.
+Você pode salvar documentos numa biblioteca pessoal.
+
+Palavra-chave da prova: “onde encontro os relatórios de auditoria/conformidade da Microsoft?” → Service Trust Portal.
