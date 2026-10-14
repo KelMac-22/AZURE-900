@@ -1,0 +1,43 @@
+1. Azure Monitor
+
+O que é: a plataforma central que coleta, analisa e reage aos dados de telemetria dos seus recursos (VMs, apps, bancos, rede), estejam eles no Azure ou on-premises.
+
+Pontos que caem na prova:
+
+Coleta dois tipos de dados: métricas (números ao longo do tempo, como uso de CPU) e logs (registros de eventos).
+Log Analytics é onde você consulta os logs, usando a linguagem KQL (Kusto Query Language).
+Alertas (Azure Monitor Alerts): disparam quando algo passa de um limite (ex.: CPU > 90%) e podem acionar e-mail, SMS, automação etc. via Action Groups.
+Application Insights faz parte do Azure Monitor e monitora aplicações web (tempo de resposta, falhas, usuários).
+Funciona também com recursos fora do Azure (on-premises, outras nuvens).
+
+Dica de prova: se a pergunta fala em “monitorar desempenho da sua VM”, “consultar logs”, “criar alerta quando a CPU subir” ou “monitorar uma aplicação web” → Azure Monitor (ou Application Insights, se for app).
+
+2. Service Health (Integridade do Serviço)
+
+O que é: mostra a saúde dos serviços da própria Microsoft, ou seja, se o problema é do Azure e não seu. Funciona em 3 níveis (a linha roxa do diagrama):
+
+Azure Status: página pública e global. Mostra incidentes que afetam todo mundo, sem precisar logar.
+Service Health: visão personalizada para os serviços e regiões que você usa. Informa: problemas em andamento, manutenções planejadas, avisos de integridade e de segurança. Dá para configurar alertas.
+Resource Health: a saúde de um recurso específico seu (ex.: “sua VM está indisponível por causa de um problema na plataforma”).
+
+Dica de prova: “a Microsoft vai fazer uma manutenção planejada na região, como ser avisado?” ou “há uma interrupção afetando os serviços do Azure que eu uso?” → Service Health. Se for “uma VM específica minha” → Resource Health.
+
+3. Azure Advisor (Assistente do Azure)
+
+O que é: um consultor gratuito e personalizado que analisa como seus recursos estão configurados e dá recomendações de melhoria. Ele não aplica nada sozinho, ele sugere.
+
+Os 5 pilares (categorias de recomendação):
+
+Custo: ex.: “esta VM está quase sem uso, reduza o tamanho ou desligue” → economizar dinheiro.
+Segurança: ex.: “habilite MFA”, “feche esta porta exposta” (integra com o Microsoft Defender for Cloud).
+Confiabilidade (antes chamada de alta disponibilidade): ex.: “coloque suas VMs em zonas de disponibilidade”, “ative o backup”.
+Desempenho: ex.: “use um disco mais rápido”, melhorar a velocidade.
+Excelência operacional: boas práticas de processos e gerenciamento.
+
+Dica de prova: se a pergunta pede recomendações, “melhores práticas” ou “como reduzir custos de recursos subutilizados” → Advisor. As respostas erradas comuns aqui são Azure Monitor (que monitora, mas não recomenda) e Cost Management (que mostra e controla gastos, mas quem recomenda é o Advisor).
+
+Resumo para decorar
+Pergunta da prova	Serviço
+Como estão meus recursos? (métricas, logs, alertas)	Azure Monitor
+O Azure está com problema / manutenção planejada?	Service Health
+O que eu posso melhorar? (recomendações)	Azure Advisor
