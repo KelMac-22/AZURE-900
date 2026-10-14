@@ -1,0 +1,222 @@
+1. Portal do Azure e Resource Groups
+
+Portal = site (portal.azure.com) para criar e gerenciar recursos clicando. É o jeito mais fácil, mas não é bom para tarefas repetitivas, porque é manual.
+
+Resource Group (grupo de recursos) = uma “pasta” lógica que agrupa recursos de um mesmo projeto ou ciclo de vida.
+
+O que cai na prova:
+
+Todo recurso precisa estar em exatamente 1 resource group.
+Resource groups não podem ser aninhados (não existe RG dentro de RG).
+Apagou o RG, apaga tudo que está dentro. Muito cobrado.
+Os recursos podem estar em regiões diferentes da região do RG.
+Um recurso pode ser movido de um RG para outro.
+Permissões (RBAC), tags e bloqueios aplicados no RG são herdados pelos recursos de dentro.
+
+Hierarquia (decore): Management Groups → Subscriptions → Resource Groups → Resources
+
+2. PowerShell, Bash e Cloud Shell
+Ferramenta	O que é	Exemplo de comando
+Azure PowerShell	Módulo Az do PowerShell. Comandos no formato Verbo-Substantivo	New-AzResourceGroup
+Azure CLI	Comandos que começam com az. Normalmente usada no Bash	az group create
+Cloud Shell	Terminal dentro do navegador/portal, já logado na sua conta, que oferece Bash ou PowerShell	—
+
+Bash é um shell (terminal) do Linux. No Azure, quando você abre o Cloud Shell no modo Bash, normalmente usa a Azure CLI (az ...). No modo PowerShell, usa os cmdlets (...-Az...). Na prática, os dois fazem as mesmas coisas.
+
+Pontos de prova:
+
+Azure CLI e Azure PowerShell funcionam em Windows, Linux e macOS.
+O Cloud Shell não exige instalar nada e já vem autenticado.
+Para que serve linha de comando? Automação e repetição (scripts). O portal é manual.
+Por que o Cloud Shell pede um Storage Account?
+
+Na primeira vez que você abre o Cloud Shell, ele pede para criar um storage account. Isso serve para guardar seus arquivos (scripts, configs) num compartilhamento do Azure Files, para eles continuarem lá na próxima sessão. Hoje também existe a opção de sessão temporária, sem storage, mas aí os arquivos somem ao fechar.
+
+Storage Account — o que é
+
+É o recurso que dá um espaço único de armazenamento no Azure, acessível de qualquer lugar via HTTP/HTTPS. Dentro dele ficam 4 serviços:
+
+Serviço	Para quê
+Blob	Arquivos não estruturados (fotos, vídeos, backups)
+Files	Compartilhamento de arquivos (tipo pasta de rede, SMB)
+Queue	Filas de mensagens entre aplicações
+Table	Dados NoSQL simples (chave/valor)
+
+Cai na prova:
+
+O nome tem que ser único no mundo inteiro, só letras minúsculas e números, de 3 a 24 caracteres.
+Redundância: LRS (3 cópias em 1 datacenter), ZRS (3 zonas de disponibilidade), GRS (copia para outra região), GZRS (zonas + outra região).
+Camadas de acesso do Blob: Hot (acesso frequente), Cool (≥30 dias), Cold (≥90 dias), Archive (≥180 dias, mais barato para guardar, mais lento e caro para ler).
+3. Comandos principais (CLI x PowerShell)
+Tarefa	Azure CLI	Azure PowerShell
+Fazer login	az login	Connect-AzAccount
+Criar resource group	az group create --name RG-Estudo --location brazilsouth	New-AzResourceGroup -Name RG-Estudo -Location brazilsouth
+Listar resource groups	az group list	Get-AzResourceGroup
+Listar redes virtuais	az network vnet list	Get-AzVirtualNetwork
+Listar VMs	az vm list	Get-AzVM
+Criar VM	az vm create ...	New-AzVM ...
+Ligar / desligar VM	az vm start / az vm stop	Start-AzVM / Stop-AzVM
+Criar storage account	az storage account create ...	New-AzStorageAccount ...
+Apagar resource group	az group delete --name RG-Estudo	Remove-AzResourceGroup -Name RG-Estudo
+
+Dica para lembrar: no PowerShell, Get = listar/ver, New = criar, Remove = apagar, Set = alterar. Na CLI é az <serviço> <ação> (list, create, delete).
+
+A AZ-900 não pede para decorar a sintaxe dos comandos. Ela pergunta coisas como: “qual ferramenta usar para automatizar a partir do Linux?” (CLI ou PowerShell) ou “qual ferramenta roda no navegador?” (Cloud Shell).
+
+4. ARM (Azure Resource Manager)
+
+ARM é o serviço de implantação e gerenciamento do Azure. Todo pedido (portal, CLI, PowerShell, SDK, API REST) chega nele, que confere quem você é, se tem permissão e então cria/altera o recurso.
+
+Benefícios que caem na prova:
+
+Gerenciar a infraestrutura com templates declarativos em vez de scripts.
+Implantar, gerenciar e monitorar recursos como grupo, não um por um.
+Implantar de novo com resultado consistente.
+Definir dependências entre recursos (ex.: criar a rede antes da VM).
+Aplicar RBAC, tags e resource locks (bloqueios).
+
+Resource locks (aparecem muito):
+
+CanNotDelete (Delete): pode alterar, mas não pode apagar.
+ReadOnly: só pode ler — não pode alterar nem apagar.
+O bloqueio vale até para quem é Owner/administrador. Para apagar, precisa remover o lock primeiro.
+5. JSON, ARM Templates e Export Template
+O que é JSON
+
+JSON (JavaScript Object Notation) é um formato de texto para organizar dados em pares “chave”: valor. É fácil para pessoas lerem e para computadores processarem.
+
+json
+{
+  "nome": "Kelwen",
+  "curso": "AZ-900",
+  "aprovado": true
+}
+Por que o Azure usa JSON
+
+Porque os ARM Templates são escritos em JSON. O JSON descreve o que você quer (ex.: “uma VM Windows, tamanho X, nesta rede”) e o ARM se vira para chegar lá. Isso é Infraestrutura como Código (IaC).
+
+Estrutura de um ARM template:
+
+json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": { },   // valores que mudam a cada implantação (nome, senha)
+  "variables":  { },   // valores calculados/reaproveitados
+  "resources":  [ ],   // os recursos a criar (o coração do template)
+  "outputs":    { }    // o que devolver no final (ex.: IP da VM)
+}
+
+Palavras-chave de prova sobre templates:
+
+Declarativo: você diz o que quer, não o passo a passo.
+Idempotente: rodar o mesmo template várias vezes dá o mesmo resultado, sem duplicar nada.
+Repetível: ótimo para criar ambientes iguais (dev, teste, produção).
+Pode ficar em controle de versão (Git) como qualquer código.
+Export Template
+
+No portal, em um resource group ou recurso → Automation → Export template. O Azure gera o JSON (e também Bicep) de tudo que você criou clicando.
+
+Para que serve:
+
+Você cria algo pelo portal e depois reaproveita como código para criar igual de novo.
+Documentar como o ambiente está configurado.
+Servir de ponto de partida para escrever seus próprios templates.
+6. Bicep e Bicep Playground
+
+Bicep é uma linguagem mais simples que faz a mesma coisa que o ARM template JSON. Na hora de implantar, o Bicep é convertido (transpilado) para ARM JSON. Ou seja: Bicep não substitui o ARM, ele é um “jeito mais fácil de escrever” para o ARM.
+
+Comparando a criação de um storage account:
+
+bicep
+resource conta 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: 'kelwenestudo123'
+  location: 'brazilsouth'
+  sku: { name: 'Standard_LRS' }
+  kind: 'StorageV2'
+}
+
+O mesmo em JSON teria o dobro de linhas, com chaves, aspas e vírgulas.
+
+Bicep Playground é um site onde você escreve Bicep de um lado e vê o JSON equivalente do outro (e pode colar um JSON para converter em Bicep). É ótimo para estudar e entender a relação entre os dois.
+
+Como criar uma VM Windows (3 jeitos)
+
+Pelo portal: Virtual machines → Create → escolhe assinatura e resource group → nome, região, imagem (Windows Server), tamanho → usuário e senha de administrador → portas de entrada (RDP 3389) → Review + create.
+
+Pela CLI:
+
+bash
+az vm create \
+  --resource-group RG-Estudo \
+  --name VM-Windows01 \
+  --image Win2022Datacenter \
+  --admin-username kelwenadmin \
+  --admin-password "SenhaForte#2026"
+
+Pelo PowerShell:
+
+powershell
+New-AzVM -ResourceGroupName "RG-Estudo" -Name "VM-Windows01" `
+  -Location "brazilsouth" -Image "Win2022Datacenter" -Credential (Get-Credential)
+
+Ponto de prova: quando você cria uma VM, o Azure também cria recursos ligados a ela — disco, placa de rede (NIC), rede virtual (VNet), IP público e NSG. Por isso se usa um resource group só para ela: apagando o RG, some tudo junto.
+
+7. Azure Arc (ferramenta multicloud/híbrida)
+
+O que é: o Azure Arc estende o gerenciamento do Azure (o ARM) para recursos que estão FORA do Azure — servidores no seu datacenter, máquinas na AWS ou no Google Cloud, servidores na borda (edge).
+
+Na prática, esses servidores externos aparecem no portal do Azure como se fossem recursos do Azure, e você aplica neles as mesmas ferramentas.
+
+O que o Arc gerencia:
+
+Servidores Windows e Linux (físicos ou virtuais).
+Clusters Kubernetes.
+Serviços de dados do Azure (SQL Managed Instance, PostgreSQL) rodando fora do Azure.
+SQL Server instalado fora do Azure.
+VMs de ambientes como VMware e Azure Stack HCI.
+
+O que dá para fazer com eles depois de conectados:
+
+Aplicar Azure Policy (regras de conformidade).
+Controlar acesso com RBAC.
+Organizar com tags.
+Monitorar com Azure Monitor e proteger com Microsoft Defender for Cloud.
+
+Pegadinha clássica: o Arc não migra nada para o Azure. Os servidores continuam onde estão; o Arc só traz o gerenciamento para um lugar só.
+
+8. Resumo do que mais cai
+Todas as ferramentas passam pelo ARM → resultado consistente.
+Cloud Shell = navegador, já autenticado, Bash ou PowerShell.
+CLI e PowerShell = automação/scripts, funcionam em Windows, Linux e Mac.
+ARM template = JSON, declarativo, idempotente, repetível → Infraestrutura como Código.
+Bicep = linguagem mais simples que vira ARM JSON.
+Apagar resource group apaga tudo dentro; RGs não se aninham.
+Resource locks: CanNotDelete x ReadOnly; valem até para o Owner.
+Azure Arc = gerenciar on-premises e outras nuvens pelo Azure, sem migrar.
+Storage account: nome globalmente único; Blob/Files/Queue/Table; LRS/ZRS/GRS/GZRS; Hot/Cool/Cold/Archive.
+Questões no estilo da prova
+
+1. Você precisa gerenciar servidores físicos no seu datacenter e VMs na AWS usando o Azure Policy. O que usar?
+→ Azure Arc.
+
+2. Você quer implantar o mesmo ambiente várias vezes, sempre igual, usando um arquivo declarativo. O que usar?
+→ ARM template (ou Bicep).
+
+3. Qual ferramenta permite rodar comandos do Azure pelo navegador, sem instalar nada?
+→ Azure Cloud Shell.
+
+4. O Cloud Shell suporta quais shells?
+→ Bash e PowerShell.
+
+5. Um administrador com papel Owner não consegue apagar uma VM. Qual a causa provável?
+→ Um resource lock (CanNotDelete ou ReadOnly).
+
+6. Você apaga um resource group que tem 3 VMs e 1 storage account. O que acontece?
+→ Tudo é apagado junto.
+
+7. Você criou recursos pelo portal e quer o código para recriá-los. O que usar?
+→ Export template.
+
+8. Verdadeiro ou falso: o Azure Arc migra os servidores locais para o Azure.
+→ Falso. Ele só estende o gerenciamento.
